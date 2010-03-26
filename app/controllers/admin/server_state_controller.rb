@@ -4,7 +4,9 @@ class Admin::ServerStateController < Admin::ApplicationController
 		@autorizedIps = ServerStatus.first.ips
 		@authorizedIps = nil if(!@authorizedIps.is_a?(Array))
 		if request.path_parameters['controller'] != 'admin/server_state'
-			render :partial => 'index_less'
+			render :partial => 'index'
+		else
+			render 'index_less'
 		end
 	end
 
