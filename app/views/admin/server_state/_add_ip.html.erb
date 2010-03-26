@@ -1,0 +1,4 @@
+<% if @addIpReturn.nil? -%><div id="addIpResult"><%= @addIpReturn %></div><% end -%>
+<% form_for 'server_state', { :action => "/admin/server_state/add_ip", :method => "post"} do |f| %>
+	<label for='newIp'>Nouvelle ip a autoriser</label><%= f.text_field 'newIp'%><span onclick="ServerState.addIp($('server_state_newIp').value);" style="cursor:pointer">Rajouter</span>
+<% end -%>

@@ -1,0 +1,66 @@
+ServerState
+===========
+
+
+Be careful is always in Beta phase the maintenance check/in/out method works but interface is not completly finished! But i accept all feedback :)
+
+
+
+ This plugin provide a system to manage maintenance state of web server.
+
+ He provides an admin interface to set the maintenance ON/OFF, and to list IPs authorized to bypass the maintenance mode (usefull to check an update maked during the maintenance).
+
+ The system redirect user to static maintenance page during maintenance mode.
+
+ The plugin could use many backend to store maintenance mode and ips (database, memcache are provided for the moment FileLock, BRb and MongoDB must provided later)
+
+
+ Install :
+ in your application rails directory :
+
+	./script/plugin install git://github.com/atalargo/ServerState.git
+
+ create a file server_state.rb in the config/initializers directory and write in the line:
+
+	ServerState::Backend.use_backend('Ar')
+
+ Replace 'Ar' by the backend id available (Ar for ActiveRecord backend, Memcache for Memcache backend)
+
+ If you use ActiveRecord backend, launche the command
+	./script/generate server_state
+
+this generates the migration used by the backend and after (if your database is configured) :
+	rake db:migrate
+	to propage the migration
+
+
+
+
+Requires:
+	it's only requires ActiveRecord or Memcache for the backends.
+
+	The admin interface requires that you use an admin namespace subdirectory (app/controller/admin/) and you must provide an Admin::ApplicationController base contoller class
+
+
+	the admin interface view is construct to be integrate in one of your admin interface page, so :
+		- if you use embedded_action plugin ( http://github.com/sd/embedded-actions ) include the line :
+			<%= embed_action :controller => "admin/server_state", :action => "index" %>
+		- if you use other similar plugin (Cell, etc) : follow the rules of your plugin for this -may be in futur, server_state plugin will provide laready write class for Cell Component http://cells.rubyforge.org/ or other if there is some people that query it.
+		- if you use ActiveScaffold and if your Admin::ApplicationController active ActiveScaffold for all, you can try to use directly the provided controller, that could be workds too.
+		- if you provide nothing, you cold always directly go to page /admin/server_state a very basic render is provided
+
+
+The plugin provide some task too :
+	- server_state:check : return maitnenance ON or maintenance OFF
+	- server_state:set:in : put the maintenance mode on ON
+	- server_state:set:out : put the maintenance mode on OFF
+
+
+TODO:
+	- File backend
+	- Brb Backend
+	- use authentification/authorization system in couple with the IPs bypass system to only authorize to bypass the admin authentified users for ips
+	- use a secure mechanisme redirect to static maintenance file if the backend failed (if during the maintenance, you shutdown the database, by example, the systeme will must redirect to maintenance all users -no bypass system allowed in this case)
+	- give possibility to the users authorized to bypass maintenance to choose if they use bypass or not (use cookie only managed for authorized users)
+	- improved the interface.
+
