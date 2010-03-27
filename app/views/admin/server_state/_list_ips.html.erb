@@ -1,0 +1,25 @@
+<% if @authorizedIps.nil? || @authorizedIps.empty? -%>
+<tr class="record">
+	<td colspan="2">Pas d'ip enregistree pour outrepasser la maintenance</td>
+</tr>
+<% else
+	count = 0
+	@authorizedIps.each do |ip|
+	odd = (count%2 == 0 ? ' odd' : '') -%>
+<tr class="record <%=odd%>" id="record-<%=ip%>">
+	<td><%=ip%></td>
+	<td class="actions"><%= link_to_remote 'Retirer', :update => 'bodyListIps', :url=> url_for(:controller => 'server_state', :action => 'remove_ip'), :with => "'ip=#{ip}'", :method => 'post', :confirm => 'Are you sure to remove \''+ip+'\'?' %></td>
+</tr>
+	<% end -%>
+<% end -%>
+
+<% unless @addIpResult.nil?-%>
+<script type="text/javascript">
+<% if @addIpResult -%>
+	$('addIpResult').innerHTML = '<div class="result_ok">Ip rajouté</div>';
+<% else -%>
+	$('addIpResult').innerHTML = '<div class="result_error"><%= escape_javascript(@addIpResultError) %></div>';
+<% end -%>
+	$('addIpResult').show();
+</script>
+<% end -%>
