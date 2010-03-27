@@ -47,7 +47,7 @@ module ServerState
 	class Filter
 		def self.before(controller)
 			if ServerState.is_maintenance_for?(controller.request.remote_ip)
-				controller.response.redirect  $ENV['RailsBaseURI']+'/mainten_ance.html', :status=>503
+				controller.response.redirect_to  controller.relative_url_root+'/maintenance.html', :status=>503
 			end
 		end
 
@@ -60,7 +60,7 @@ module ServerState
 						nil
 					end
 				unless pos.nil?
-					body.insert pos, '<div style="position:fixed;left:10px;top:10px;border:solid 2px red;color:red;font-size:16px;margin:10px;background:white">SERVER IN MAINTENANCE</div>'
+					body.insert pos, '<div style="position:fixed;left:10px;top:10px;border:solid 2px red;color:red;font-size:16px;margin:10px;background:white;z-index:100000;">SERVER IN MAINTENANCE</div>'
 				end
 			end
 		end

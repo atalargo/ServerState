@@ -17,32 +17,32 @@ module ServerState
 					self
 				end
 
-				def self.save
+				def save
 					@@mcache.write(@@active_status_key, @@c)
 				end
 				def self.save!
 					save
 				end
 
-				def self.add_authorized_ip(ip)
+				def add_authorized_ip(ip)
 					@@c[:ips].push(ip)
 					save
 				end
 
-				def self.delete_authorized_ip(ip)
+				def delete_authorized_ip(ip)
 					@@c[:ips].delete_if{|iprecord| iprecord == ip}
 					save
 				end
 
-				def self.ips
+				def ips
 					return @@c[:ips]
 				end
 
-				def self.maintenance
+				def maintenance
 					return @@c[:maintenance]
 				end
 
-				def self.maintenance=(m)
+				def maintenance=(m)
 					@@c[:maintenance] = m
 				end
 			end

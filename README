@@ -46,9 +46,18 @@ Requires:
 		- if you use embedded_action plugin ( http://github.com/sd/embedded-actions ) include the line :
 			<%= embed_action :controller => "admin/server_state", :action => "index" %>
 		- if you use other similar plugin (Cell, etc) : follow the rules of your plugin for this -may be in futur, server_state plugin will provide laready write class for Cell Component http://cells.rubyforge.org/ or other if there is some people that query it.
-		- if you use ActiveScaffold and if your Admin::ApplicationController active ActiveScaffold for all, you can try to use directly the provided controller, that could be workds too.
+		- if you use ActiveScaffold and if your Admin::ApplicationController active ActiveScaffold for all, you can add direct the helper where you want
 		- if you provide nothing, you cold always directly go to page /admin/server_state a very basic render is provided
 
+
+	you can direct integrate the interface in one of your admin page by add this line in your view :
+
+	<%= server_state_admin %>
+
+	Enjoy !
+
+
+	When you browse your site bypassing the maintenance mode, an visual indication (big red div with message SERVER IN MAINTENANCE always in abasolute position) id automatically added in all rendered page -only html page-
 
 The plugin provide some task too :
 	- server_state:check : return maitnenance ON or maintenance OFF
@@ -56,11 +65,13 @@ The plugin provide some task too :
 	- server_state:set:out : put the maintenance mode on OFF
 
 
+If you run you rails app with PhusionPassenger, some tasks linked provided too in interface (restart passenger, memory stats)
+
 TODO:
 	- File backend
 	- Brb Backend
 	- use authentification/authorization system in couple with the IPs bypass system to only authorize to bypass the admin authentified users for ips
 	- use a secure mechanisme redirect to static maintenance file if the backend failed (if during the maintenance, you shutdown the database, by example, the systeme will must redirect to maintenance all users -no bypass system allowed in this case)
 	- give possibility to the users authorized to bypass maintenance to choose if they use bypass or not (use cookie only managed for authorized users)
-	- improved the interface.
+	- improved the interface -in part realized-.
 

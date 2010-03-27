@@ -1,4 +1,4 @@
-<% if @addIpReturn.nil? -%><div id="addIpResult"><%= @addIpReturn %></div><% end -%>
-<% form_for 'server_state', { :action => "/admin/server_state/add_ip", :method => "post"} do |f| %>
-	<label for='newIp'>Nouvelle ip a autoriser</label><%= f.text_field 'newIp'%><span onclick="ServerState.addIp($('server_state_newIp').value);" style="cursor:pointer">Rajouter</span>
+<div id="addIpResult" style="display:hidden"></div>
+<% form_remote_tag :html => {:action => url_for(:controller => 'server_state', :action => 'add_ip'), :method => 'post', :id => 'form_add_ip'}, :update => 'bodyListIps', :url => url_for(:controller => 'server_state', :action => 'add_ip') do  -%>
+<label for='newIp'>Nouvelle ip a autoriser : </label><%= text_field_tag 'newIp'-%><%= submit_tag 'Rajouter' %>
 <% end -%>

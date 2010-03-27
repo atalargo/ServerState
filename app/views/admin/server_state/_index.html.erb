@@ -1,68 +1,40 @@
+
 <div id="serverState">
- <div class="active-scaffold default-theme">
+	<div class="active-scaffold default-theme">
 
-	<% maintenance = ServerState.is_maintenance? %>
-	<div class="active-scaffold-header">
-		<div class="actions"><a href="/admin/server_state/set_<%=(maintenance ? 'out' : 'in')%>"><% if maintenance -%>Sortir de la<%else-%>Mettre en<%end-%> maintenance</a></div>
-		<h2>ServerState Maintenance</h2>
+		<% maintenance = ServerState.is_maintenance? %>
+		<div class="active-scaffold-header">
+			<div class="actions"><a href="<%= url_for(:controller => 'server_state', :action => "set_#{(maintenance ? 'out' : 'in')}")%>"><% if maintenance -%>Sortir de la<%else-%>Mettre en<%end-%> maintenance</a></div>
+			<h2>ServerState Maintenance</h2>
+		</div>
+		<table cellpadding="0" cellspacing="0">
+			<thead>
+				<tr>
+					<th>Ip autorisee</th>
+					<th class="actions"><a href="" onclick="$('addIp').show();return false;">Ajouter</a></th>
+				</tr>
+				<tr id="addIp" style="display:none">
+					<th colspan="2">
+						<%= render :partial => 'add_ip' %>
+					</th>
+				</tr>
+			</thead>
+			<tbody class="records" id="bodyListIps">
+			<%= render :partial => 'list_ips'%>
+			</tbody>
+		</table>
 	</div>
-	<table cellpadding="0" cellspacing="0">
-		<thead>
-			<tr>
-				<th>Ip autorisee</th>
-				<th class="actions"><a href="" onclick="ServerState.addIp();return false;">Ajouter</a></th>
-			</tr>
-			<tr id="addIp" style="display:none">
-				<th colspan="2">
-					<div id="addIpEdit">
-					</div>
-				</th>
-			</tr>
-		</thead>
-		<tbody class="records">
-		<% 
-#		  @authorizedIps = ServerStatus.first.ips
-		  
-		   if @authorizedIps.nil? || @authorizedIps.empty? -%>
-			<tr class="record">
-				<td colspan="2">Pas d'ip enregistree pour outrepasser la maintenance</td>
-			</tr>
-		<% else 
-			count = 0
-			 @authorizedIps.each do |ip| 
-			 odd = (count%2 == 0 ? ' odd' : '') -%>
-			 <tr class="record <%=odd%>" id="record-<%=ip%>">
-			 	<td><%=ip%></td>
-				<td class="actions"><a href="" onclick="ServerState.removeIp('<%=ip%>';return false">Retirer</a></td>
-			 </tr>
-			<% end -%>
-		<% end -%>
-		</tbody>
-	</table>
+	<% if defined?(PhusionPassenger) -%>
+	<div class="active-scaffold default-theme">
+		<div class="active-scaffold-header">
+			<h2>ServerState Passenger</h2>
+		</div>
+		<p>Application Running on Passenger : <%= link_to_remote 'Relancer Passenger', :url=> url_for(:controller => 'server_state', :action => 'passenger_restart'), :method => 'post', :confirm => 'Are you sure to restart Phusion Passenger?' %> <span id="passenger_return"></span></p>
+		<p>Memory Stats : <%= link_to_remote 'Get Passenger Memory stats', :url=> url_for(:controller => 'server_state', :action => 'passenger_memory'), :method => 'post' %>
+			<pre id="passenger_memory_stat">
+			</pre>
+		</p>
+	</div>
+	<% end -%>
 </div>
-</div>
-<script type="text/javascript">
-ServerState = new Object();
-ServerState.addIp = function(ip) {
-	new Ajax.Updater('addIpEdit', '<%= url_for(:controller => 'server_state', :action => 'add_ip')%>',
-		{
-			method:'post',
-			postBody:'ip='+(ip == undefined ? '' : ip ),
-			onComplete:function(){$('addIp').show();}
-		}
-	);
-};
-ServerState.removeIp = function(ip) {
-	var elem = $('record_'+ip);
-	if(elem) {
-		elem.hide();
-		elem.nextSibling().each(function(nextElem) {
-			if(nextElem.hasClassName('odd'))
-				nextEleme.removeClassName('odd');
-			else
-				nextEleme.addClassName('odd');
-		});
-	}
-};
 
-</script>

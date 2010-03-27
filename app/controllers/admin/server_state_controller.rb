@@ -1,8 +1,11 @@
 class Admin::ServerStateController < Admin::ApplicationController
 
 	def index
-		@autorizedIps = ServerStatus.first.ips
-		@authorizedIps = nil if(!@authorizedIps.is_a?(Array))
+		get_ips
+		unless flash['addIpResult'].nil?
+			@addIpResult = flash['addIpResult']
+			@addIpResultError = flash['addIpResultError'] if !@addIpResult
+		end
 		if request.path_parameters['controller'] != 'admin/server_state'
 			render :partial => 'index'
 		else
@@ -11,22 +14,82 @@ class Admin::ServerStateController < Admin::ApplicationController
 	end
 
 	def add_ip
-		newIp = params['ip']
+		newIp = params[:newIp]
 		unless newIp.nil?
 			begin
-				ServerStatus.add_authorized_ip(ip)
-				@addIpResult = 'Ip Rajouté'
+				ServerStatus.first.add_authorized_ip(newIp)
+				@addIpResult = true
 			rescue => e
-				@addIpResult = 'Error occurs '+e.message
+				@addIpResult = false
+				@addIpResultError = e.message
 			end
 		end
-		render :partial => 'add_ip'
+		if request.xhr?
+			get_ips
+			render :partial => 'list_ips', :layout => false
+		else
+			flash['addIpResult'] = @addIpResult
+			flash['addIpResultError'] = @addIpResultError if !@addIpResult
+			redirect_to :action => 'index'
+		end
 	end
 
 	def remove_ip
-		unless params['ip'].nil?
-			ServerStatus.delete_autorized_ip(ip)
+		unless params[:ip].nil?
+			begin
+				ServerStatus.first.delete_authorized_ip(params[:ip])
+				@addIpResult = true
+			rescue => e
+				@addIpResult = false
+				@addIpResultError = e.message
+			end
 		end
+		if request.xhr?
+			get_ips
+			render :partial => 'list_ips', :layout => false
+		else
+			flash['addIpResult'] = @addIpResult
+			flash['addIpResultError'] = @addIpResultError if !@addIpResult
+			redirect_to :action => 'index'
+		end
+	end
+
+	def set_in
+		ServerState.set_in_maintenance
+		redirect_to :action => 'index'
+	end
+
+	def set_out
+		ServerState.set_out_maintenance
+		redirect_to :action => 'index'
+	end
+
+	protected
+	def get_ips
+		@authorizedIps = ServerStatus.first.ips
+		@authorizedIps = nil if(!@authorizedIps.is_a?(Array))
 	end
 end
 
+if defined?(PhusionPassenger)
+	Admin::ServerStateController.class_eval do
+		def passenger_restart
+			`touch #{Rails.root}/tmp/restart.txt`
+			render :update do |page|
+				page.replace_html 'passenger_return', 'Passenger restarted'
+				page.show 'passenger_return'
+				page.visual_effect :highlight, 'passenger_return'
+				page.delay(10) do
+					page.visual_effect :fade, 'passenger_return'
+				end
+			end
+		end
+
+		def passenger_memory
+			stat = `passenger-memory-stats`
+			render :update do |page|
+				page.replace_html 'passenger_memory_stat', stat.gsub(/\[\d*m/, '')
+			end
+		end
+	end
+end

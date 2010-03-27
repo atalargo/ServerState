@@ -28,14 +28,14 @@ module ServerState
 
 				def save
 					super
-					reload(:lock_true)
+					reload(self.id)
 			#		autocache
 				end
 
 				def add_authorized_ip(ip)
 					self.ips = [] if self.ips.nil?
 					self.ips.push(ip)
-					save
+					save!
 				end
 
 				def delete_authorized_ip(ip)
