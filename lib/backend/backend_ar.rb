@@ -2,6 +2,8 @@ module ServerState
 	module Backend
 
 		ServerState::Backend.add_backend('Ar')
+		ServerState::Backend.set_handler_for(ActiveRecord::ConnectionNotEstablished)
+		BackendHandler = ActiveRecord::ConnectionNotEstablished
 		module Ar
 			class ServerStatus < ActiveRecord::Base
 				set_table_name :server_status
@@ -10,6 +12,7 @@ module ServerState
 				@@active_status_key = 'active_status_cache_key'
 
 				def self.first(*args)
+					begin
 					return super
 					ret = if ActionController::Base.cache_configured?
 						cac = Rails.cache.read(@@active_status_key)
@@ -24,6 +27,10 @@ module ServerState
 						self.find(:first)
 					end
 					ret
+					rescue => e
+						RAILS_DEFAULT_LOGGER.debug(e.message)
+						throw e
+					end
 				end
 
 				def save
@@ -49,6 +56,7 @@ module ServerState
 						ActionController::Base.cache @@active_status_key, self
 					end
 				end
+
 
 			end
 		end

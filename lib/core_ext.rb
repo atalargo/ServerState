@@ -21,6 +21,14 @@ ActionController::Base.class_eval do
 # 		render  :text => '', :location => request.protocol+request.host+relative_url_root+'/maintenance.html', :status => 503
 	end
 
+	def render_with_exception(options = nil, deprececated_status = nil, &block)
+		exception = options.delete(:exception) if options
+		RAILS_DEFAULT_LOGGER.debug("RAISED EXCEPTION")
+		if exception.is_a(ServerState::Backend::BackendHandler)
+			redirect_maintenance
+		end
+
+	end
 end
 
 require File.dirname(__FILE__)+'/../app/helpers/server_state_helper'

@@ -9,19 +9,24 @@ class Admin::ServerStateController < Admin::ApplicationController
 		if request.path_parameters['controller'] != 'admin/server_state'
 			render :partial => 'index'
 		else
-			render 'index_less'
+			render 'index_less', :layout => false
 		end
 	end
 
 	def add_ip
 		newIp = params[:newIp]
-		unless newIp.nil?
-			begin
-				ServerStatus.first.add_authorized_ip(newIp)
-				@addIpResult = true
-			rescue => e
-				@addIpResult = false
-				@addIpResultError = e.message
+		if newIp !~ /^(\d{1,3}\.){3}\d{1,3}$/
+			@addIpResult = false
+			@addIpResultError = I18n.t :bad_format_ip, :scope => :server_state
+		else
+			unless newIp.nil?
+				begin
+					ServerStatus.first.add_authorized_ip(newIp)
+					@addIpResult = true
+				rescue => e
+					@addIpResult = false
+					@addIpResultError = e.message
+				end
 			end
 		end
 		if request.xhr?
@@ -63,6 +68,7 @@ class Admin::ServerStateController < Admin::ApplicationController
 		ServerState.set_out_maintenance
 		redirect_to :action => 'index'
 	end
+
 
 	protected
 	def get_ips

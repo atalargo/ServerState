@@ -1,14 +1,13 @@
 <% if @authorizedIps.nil? || @authorizedIps.empty? -%>
 <tr class="record">
-	<td colspan="2">Pas d'ip enregistree pour outrepasser la maintenance</td>
+	<td colspan="2"><%= I18n.t :not_ip_found, :scope => :server_state %></td>
 </tr>
 <% else
 	count = 0
-	@authorizedIps.each do |ip|
-	odd = (count%2 == 0 ? ' odd' : '') -%>
-<tr class="record <%=odd%>" id="record-<%=ip%>">
+	@authorizedIps.each do |ip|-%>
+<tr class="record <%=cycle('odd', 'even')%>" id="record-<%=ip%>">
 	<td><%=ip%></td>
-	<td class="actions"><%= link_to_remote 'Retirer', :update => 'bodyListIps', :url=> url_for(:controller => 'server_state', :action => 'remove_ip'), :with => "'ip=#{ip}'", :method => 'post', :confirm => 'Are you sure to remove \''+ip+'\'?' %></td>
+	<td class="actions"><%= link_to_remote I18n.t(:remove, :scope => :server_state), :update => 'bodyListIps', :url=> url_for(:controller => 'server_state', :action => 'remove_ip'), :with => "'ip=#{ip}'", :method => 'post', :confirm => I18n.t(:confirm_remove, :scope => :server_state, :ip => ip) %></td>
 </tr>
 	<% end -%>
 <% end -%>
@@ -16,9 +15,9 @@
 <% unless @addIpResult.nil?-%>
 <script type="text/javascript">
 <% if @addIpResult -%>
-	$('addIpResult').innerHTML = '<div class="result_ok">Ip rajouté</div>';
+	$('addIpResult').innerHTML = '<div class="result_ok"><%= I18n.t :add_ip_ok, :scope => :server_state %></div>';
 <% else -%>
-	$('addIpResult').innerHTML = '<div class="result_error"><%= escape_javascript(@addIpResultError) %></div>';
+	$('addIpResult').innerHTML = '<div class="result_error"><%= I18n.t :add_ip_error, :scope => :server_state %><%= escape_javascript(@addIpResultError) %></div>';
 <% end -%>
 	$('addIpResult').show();
 </script>
