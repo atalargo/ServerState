@@ -16,9 +16,8 @@ ActionController::Base.class_eval do
 	end
 
 	def redirect_maintenance
-#  		head "HTTP/1.1 503 temporarily overloaded", :location => request.protocol+request.host+relative_url_root+'/maintenance.html'
-		redirect_to(relative_url_root+'/maintenance.html', :status => 503)
-# 		render  :text => '', :location => request.protocol+request.host+relative_url_root+'/maintenance.html', :status => 503
+
+  		head :status => 503, :location => request.protocol+request.host+relative_url_root+'/maintenance.html', :refresh => '0; url='+ request.protocol+request.host+relative_url_root+'/maintenance.html'
 	end
 
 	def render_with_exception(options = nil, deprececated_status = nil, &block)
@@ -37,5 +36,3 @@ Admin::ApplicationController.class_eval do
 end
 
 Admin::ApplicationController.helper(ServerStateHelper)
-
-
