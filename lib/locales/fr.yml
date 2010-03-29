@@ -1,0 +1,15 @@
+fr:
+  server_state:
+    bad_format_ip: "Mauvais format d'IP"
+    set_out: 'Sortir de la '
+    maintenance: 'maintenance'
+    set_in: 'Mettre en '
+    authorized_ips: 'IPs autorisées'
+    add_ip: 'Ajouter'
+    not_ip_found: "Pas d\'ip enregistree pour outrepasser la maintenance"
+    remove: 'Retirer'
+    confirm_remove: "Êtes vous de vouloir retirer l'ip '{{ip}}' ?"
+    add_ip_ok: 'nouelle IP ajoutée'
+    add_ip_error: 'Erreur: '
+    new_ip_to_add: 'Nouvelle ip a autoriser : '
+

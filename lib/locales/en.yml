@@ -1,0 +1,15 @@
+en:
+  server_state:
+    bad_format_ip: 'Bad format IP'
+    set_out: 'Shut OFF '
+    maintenance: 'maintenance'
+    set_in: 'Shut On '
+    authorized_ips: 'Authorized IPs'
+    add_ip: 'Add'
+    not_ip_found: "No IP found to bypass the maintenance"
+    remove: 'Remove'
+    confirm_remove: "Are you sure to remove '{{ip}}' ?"
+    add_ip_ok: 'new IP added'
+    add_ip_error: 'Error: '
+    new_ip_to_add: 'New Ip to add: '
+
